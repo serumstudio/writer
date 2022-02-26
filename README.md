@@ -28,7 +28,7 @@ You can install the source using PIP. However if you want to install the built e
 
 If you want to install with the source, You will need to use [Python 3.8+](https://python.org/downloads).
 ```bash
-$ pip install serumwriter
+$ not yet implemented
 ```
 
 ## ✨ Features
