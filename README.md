@@ -13,8 +13,7 @@
   <a href="https://github.com/serumstudio/writer#serum-writer-1"><strong>Information</strong></a> ·
   <a href="https://github.com/serumstudio/writer#-installation"><strong>Installation</strong></a> ·
   <a href="https://github.com/serumstudio/writer#-features"><strong>Features</strong></a> ·
-  <a href="https://github.com/serumstudio/writer##about"><strong>About</strong></a> ·
-  <a href="https://github.com/serumstudio/writer##contributors"><strong>Contributors</strong></a>
+  <a href="https://github.com/serumstudio/writer#-contributors"><strong>Contributors</strong></a>
 </p>
 <br/>
 
