@@ -10,15 +10,15 @@
 </blockquote>
 
 <p align="center">
-  <a href="https://github.com/serumstudio/writer##serumwriter"><strong>Information</strong></a> ·
-  <a href="https://github.com/serumstudio/writer##installation"><strong>Installation</strong></a> ·
-  <a href="https://github.com/serumstudio/writer##features"><strong>Features</strong></a> ·
+  <a href="https://github.com/serumstudio/writer#serum-writer-1"><strong>Information</strong></a> ·
+  <a href="https://github.com/serumstudio/writer#-installation"><strong>Installation</strong></a> ·
+  <a href="https://github.com/serumstudio/writer#-features"><strong>Features</strong></a> ·
   <a href="https://github.com/serumstudio/writer##about"><strong>About</strong></a> ·
   <a href="https://github.com/serumstudio/writer##contributors"><strong>Contributors</strong></a>
 </p>
 <br/>
 
-## Serum Writer
+## 📃 Serum Writer
 Writer a free open-source modern text editor built for those who love to type with the support of *markdown syntax*. <br>
 This editor has a elegant and pleasant theme. The editor was created to make typing easier and better. As a developer <br>
 and a student, reading and writing became one of my hobbies. We built Serum Writer for productivity. 
@@ -75,5 +75,10 @@ Here are some avaialable features.
   </tr>
 </table>
 
+## 💻 Contributors
+Serum Writer would be nothing without these contributors.
 
+<a href="https://github.com/serumstudio/writer/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=serumstudio/writer" />
+</a>
 
