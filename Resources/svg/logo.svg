@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <g>
+            <g transform="matrix(0.879419,0,0,0.695833,3.1426,16.0097)">
+                <path d="M61.331,11.923C61.331,7.728 58.636,4.322 55.317,4.322L10.16,4.322C6.841,4.322 4.146,7.728 4.146,11.923L4.146,52.576C4.146,56.771 6.841,60.177 10.16,60.177L55.317,60.177C58.636,60.177 61.331,56.771 61.331,52.576L61.331,11.923Z" style="fill:APP_LOGO_BG2;"/>
+            </g>
+            <g transform="matrix(0.880814,0,0,0.860119,3.16341,4.26172)">
+                <path d="M61.331,11.923C61.331,7.728 58.005,4.322 53.909,4.322L11.568,4.322C7.472,4.322 4.146,7.728 4.146,11.923L4.146,52.576C4.146,56.771 7.472,60.177 11.568,60.177L53.909,60.177C58.005,60.177 61.331,56.771 61.331,52.576L61.331,11.923Z" style="fill:APP_LOGO_BG;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,19.6689,44.108)">
+            <text x="0px" y="0px" style="font-family:'TimesNewRomanPSMT', 'Times New Roman', serif;font-size:36.574px;fill:APP_LOGO_BG2;">S</text>
+        </g>
+        <g transform="matrix(1,0,0,1,1,0)">
+            <g transform="matrix(0.75,0,0,1.13836,12.7665,-5.15946)">
+                <rect x="37.102" y="19.268" width="1.995" height="26.431" style="fill:APP_LOGO_ACCENT;"/>
+            </g>
+            <g transform="matrix(1,0,0,3.56,-0.3813,-42.1994)">
+                <rect x="39.263" y="16.442" width="4.987" height="0.166" style="fill:APP_LOGO_ACCENT;"/>
+            </g>
+            <g transform="matrix(1,0,0,3.56,-0.3813,-12.1994)">
+                <rect x="39.263" y="16.442" width="4.987" height="0.166" style="fill:APP_LOGO_ACCENT;"/>
+            </g>
+        </g>
+    </g>
+</svg>

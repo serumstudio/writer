@@ -1,0 +1,438 @@
+/*
+
+See Qt documentation:
+
+  - https://doc.qt.io/qt-5/stylesheet.html
+  - https://doc.qt.io/qt-5/stylesheet-reference.html
+  - https://doc.qt.io/qt-5/stylesheet-examples.html
+
+--------------------------------------------------------------------------- */
+
+
+
+/* Reset elements ------------------------------------------------------------
+
+Resetting everything helps to unify styles across different operating systems
+
+--------------------------------------------------------------------------- */
+* {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    border-style: none;
+    border-image: none;
+    outline: 0;
+    color: $COLOR_TEXT_1
+}
+
+QScrollBar:vertical {
+    background: $COLOR_BACKGROUND_1;
+    width: 14px;
+    margin: 0px;
+  }
+  
+  QScrollBar::handle:vertical {
+    background-color: $COLOR_BACKGROUND_3;
+    min-height: 20px;
+    margin: 2px 4px 2px 4px;
+  }
+  
+  QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover, QScrollBar::handle:vertical:pressed, QScrollBar::handle:horizontal:pressed {
+    background-color:$COLOR_BACKGROUND_5;
+  }
+  
+  QScrollBar::add-line:vertical {
+    background: none;
+    height: 0px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+  }
+  
+  QScrollBar::sub-line:vertical {
+    background: none;
+    height: 0px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+  }
+  
+  QScrollBar:horizontal{
+    background: $COLOR_BACKGROUND_1;
+    height: 8px;
+    margin: 0px;
+  }
+  
+  QScrollBar::handle:horizontal {
+    background-color: $COLOR_BACKGROUND_3;
+    min-width: 20px;
+    margin: 4px 2px 4px 2px;
+  }
+  
+  
+  QScrollBar::add-line:horizontal {
+    background: none;
+    width: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+  }
+  
+  QScrollBar::sub-line:horizontal {
+    background: none;
+    width: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+  }
+
+QWidget#DialogWidget { 
+    background-color: $COLOR_BACKGROUND_1;
+    border: 1px solid $COLOR_BACKGROUND_2;
+}
+QWidget#windowMask{
+    background-color: $COLOR_BACKGROUND_1;
+    border: none;
+}
+QLabel#titleLabel { 
+    font-family: 'Segoe UI';
+    font-size: 22px;
+}
+QLabel#contentLabel {
+    font-family: 'Segoe UI';
+    font-size: 11pt;
+}
+
+
+QPushButton {
+    color: $COLOR_TEXT_1;
+    background-color: $COLOR_BACKGROUND_3;
+    font: 16px 'Segoe UI';
+    border-radius: 4px;
+    border: transparent;
+}
+
+QPushButton:pressed:hover {
+    background-color: $COLOR_BACKGROUND_5;
+}
+
+QPushButton:hover {
+    background-color: $COLOR_BACKGROUND_4;
+}
+
+QPushButton:disabled {
+    background-color: $COLOR_BACKGROUND_6;
+    color: $COLOR_TEXT_2;
+}
+
+
+QTextEdit {
+    font-size: 16px;
+    background-color: $COLOR_BACKGROUND_1;
+    color: $COLOR_TEXT_1;
+    selection-color: $COLOR_BACKGROUND_2;
+    selection-background-color: $COLOR_ACCENT_5;
+    
+}
+
+QTextEdit#Preview {
+    background-color: $COLOR_BACKGROUND_2;
+}
+
+/* Titlebar  ----------------------------------------------------------------
+
+--------------------------------------------------------------------------- */
+Titlebar {
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    
+    &:disabled {
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+QLabel {
+    font-family: 'Segoe UI';
+    
+}
+QLabel#statusLabel {
+    color: $COLOR_ACCENT_4
+}
+
+Titlebar QLabel {
+    font: 16px;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    color: $TITLE_BAR_TEXT_COLOR;
+    &:disabled {
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+MenuButton {
+    margin: 0px;
+    padding: 0px;
+    border: none;
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    color: $TITLE_BAR_TEXT_COLOR;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+
+    &::menu-indicator {
+        image: none;
+    }
+
+    &:hover {
+        color: $COLOR_TEXT_3;
+    }
+
+    &:pressed, &:checked, &:selected {
+        color: $TITLE_BAR_TEXT_COLOR;
+        background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    }
+
+    // &:disabled {
+    //     background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    // }
+}
+QMenu {
+
+    font-family: 'Segoe UI';
+    background-color: $COLOR_BACKGROUND_2;
+    &:seperator {
+        height: 1px; 
+        background: $TITLE_BAR_TEXT_COLOR;
+    }
+    
+    &::item {
+        margin: 2px 20px 2px 20px;
+        color: $TITLE_BAR_TEXT_COLOR;
+        background-color: $COLOR_BACKGROUND_2;
+
+        &:selected {
+            color: $COLOR_TEXT_3;
+            background-color: $COLOR_BACKGROUND_2;
+        }
+        &:disabled {
+            color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+        }
+    }
+}
+
+
+// Used background since QToolButton cant read icon property idk why
+
+SettingsButton {
+    border: none;
+    padding: 0px;
+    border-radius: 0px;
+    outline: none;
+    margin: 0px;
+    min-width: 45;
+    max-width: 45;
+    background: url(':/qss_icons/rc/settings_menu.png');
+    
+    &::menu-indicator {
+        image: none;
+    }
+
+    &:hover {
+        background:url(':/qss_icons/rc/settings_menu_hover.png');
+    }
+    &:disabled {
+        background:url(':/qss_icons/rc/settings_menu_disabled.png');
+    }
+    
+}
+TitlebarWindowsButton {
+    border: none;
+    padding: 0px;
+    border-radius: 0px;
+    outline: none;
+    margin: 0px;
+    min-width: 45;
+    max-width: 45;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+
+    &:disabled {
+        color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+        background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    }
+}
+
+MinimizeWindowsButton {
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    icon:url(':/qss_icons/rc/button_nt_minimize.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_nt_minimize_hover.png');
+    }
+
+    &:disabled {
+        icon:url(':/qss_icons/rc/button_nt_minimize_disabled.png');
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+MaximizeWindowsButton {
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    icon:url(':/qss_icons/rc/button_nt_maximize.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_nt_maximize_hover.png');
+    }
+
+    &:disabled {
+        icon:url(':/qss_icons/rc/button_nt_maximize_disabled.png');
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+RestoreWindowsButton {
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    icon:url(':/qss_icons/rc/button_nt_restore.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_nt_restore_hover.png');
+    }
+
+    &:disabled {
+        icon:url(':/qss_icons/rc/button_nt_restore_disabled.png');
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+CloseWindowsButton {
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    icon:url(':/qss_icons/rc/button_nt_close.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_nt_close_hover_red.png');
+    }
+
+    &:disabled {
+        icon:url(':/qss_icons/rc/button_nt_close_disabled.png');
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+CloseSquareWindowsButton {
+    min-width: 30;
+    max-width: 30;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    icon:url(':/qss_icons/rc/button_nt_close_square.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_nt_close_square_hover_red.png');
+    }
+
+    &:disabled {
+        icon:url(':/qss_icons/rc/button_nt_close_square_disabled.png');
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+
+/* Darwin Buttons  ----------------------------------------------------------------
+
+--------------------------------------------------------------------------- */
+
+TitlebarDarwinButton {
+    border: none;
+    padding: 0px;
+    border-radius: 0px;
+    outline: none;
+    margin: 0px;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+
+    &:disabled {
+        color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+
+    &:pressed, &:checked, &:selected, &:hover {
+        background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    }
+}
+
+MinimizeDarwinButton {
+    icon:url(':/qss_icons/rc/button_darwin_minimize.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_darwin_minimize_hover.png');
+    }
+
+    &:pressed {
+        icon:url(':/qss_icons/rc/button_darwin_minimize_pressed.png');
+    }
+}
+
+MaximizeDarwinButton {
+    icon:url(':/qss_icons/rc/button_darwin_maximize.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_darwin_maximize_hover.png');
+    }
+
+    &:pressed {
+        icon:url(':/qss_icons/rc/button_darwin_maximize_pressed.png');
+    }
+}
+
+RestoreDarwinButton {
+    icon:url(':/qss_icons/rc/button_darwin_restore.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_darwin_restore_hover.png');
+    }
+
+    &:pressed {
+        icon:url(':/qss_icons/rc/button_darwin_restore_pressed.png');
+    }
+}
+
+CloseDarwinButton {
+    icon:url(':/qss_icons/rc/button_darwin_close.png');
+
+    &:hover {
+        icon:url(':/qss_icons/rc/button_darwin_close_hover.png');
+    }
+
+    &:pressed {
+        icon:url(':/qss_icons/rc/button_darwin_close_pressed.png');
+    }
+}
+
+
+AppLogo {
+    border: none;
+    padding: 0px;
+    border-radius: 0px;
+    outline: none;
+    margin: 0px;
+    background-color: $TITLE_BAR_BACKGROUND_COLOR;
+    &:disabled {
+        background-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+/* FramelessWindow ----------------------------------------------------------------
+
+--------------------------------------------------------------------------- */
+FramelessWindow #__centralWidget{
+    padding: 0px;
+    border: none;
+    background-color: $COLOR_BACKGROUND_1;
+}
+
+FramelessWindow #__contentWidget{
+    padding: 0px;
+    background-color: $COLOR_BACKGROUND_1;
+
+    &:disabled {
+        border-color: $TITLE_BAR_BUTTONS_DISABLED_COLOR;
+    }
+}
+
+ButtonsWidget {
+    border: none;
+    padding: 0px;
+    border-radius: 0px;
+    outline: none;
+    margin: 0px;
+}
