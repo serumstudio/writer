@@ -1,3 +1,4 @@
 PyQt5==5.12.3
 pywin32==303
 hypecli==0.0.8
+markdown==3.3.6
