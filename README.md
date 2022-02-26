@@ -45,26 +45,31 @@ Here are some avaialable features.
 <p align="center"> themes and configuration 🌙 </p>
 <table align="center">
   <tr>
-    <th>
-      Dark
-    </th>
+      <td align="center" colspan="4">
+        <b>Dark</b>  
+      </td>
   </tr>
-  
+
   <tr>
     <th>
       <img src="images/typing.png" height="256" />
+    </th>
+    <th>
       <img src="images/w_titlebar.png" height="256" />
     </th>
   </tr>
   
   <tr>
-    <th>
-      Light
-    </th>
+      <td align="center" colspan="4">
+        <b>Light</b>  
+      </td>
   </tr>
+  
   <tr>
     <td>
       <img src="images/typing_light.png" height="256" />
+    </td>
+    <td>
       <img src="images/w_titlebar_light.png" height="256" />
     </td>
   </tr>
