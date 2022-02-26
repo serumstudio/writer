@@ -2,5 +2,5 @@ PyQt5==5.15.6
 pywin32==303
 hypecli==0.0.8
 markdown==3.3.6
-yapysy==1.12.2
+yapsy==1.12.2
 pyext==0.6
