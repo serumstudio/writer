@@ -126,7 +126,7 @@ class Main(FramelessWindow):
         
         self.save_file_as = file.addAction('Save File As')
         file.addSeparator()
-        self.pref = file.addAction('Preferences')
+        # self.pref = file.addAction('Preferences')
 
         self.menu_exit = file.addAction('Exit')
         
@@ -231,7 +231,7 @@ class Main(FramelessWindow):
         self.save_file.triggered.connect(self._save_file)
         self.save_file_as.triggered.connect(self.save_as)
         
-        self.pref.triggered.connect(self.show_pref)
+        # self.pref.triggered.connect(self.show_pref)
         self.menu_exit.triggered.connect(self.close)
 
         #: Edit Signals
