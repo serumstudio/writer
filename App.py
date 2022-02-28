@@ -46,7 +46,7 @@ def load_module_path():
     
     sys.path.append(str(mod.absolute()))
 
-def set_stylesheet(app: 'QApplication', default_theme: str = None):
+def set_stylesheet(app: 'QApplication', default_theme: str = 'dark'):
 
     if default_theme:
 
