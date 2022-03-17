@@ -55,6 +55,7 @@ def set_stylesheet(app: 'QApplication', default_theme: str = 'dark'):
         return     
 
     theme = Properties.Settings().theme
+    
     if not theme:
         Properties.Settings().theme = default_theme.lower()
         theme = default_theme.lower()

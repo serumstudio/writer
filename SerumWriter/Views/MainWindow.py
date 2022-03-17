@@ -107,7 +107,7 @@ class Main(FramelessWindow):
         self._hlayout = QHBoxLayout()
         self._hlayout.setContentsMargins(0,0,0,0)
         
-        main_menu = Menu('main', self._titlebar)
+        self.main_menu = Menu('main', self._titlebar)
         self.setStyleSheet('''
         QMenu::separator {
             height: 1px;
@@ -115,37 +115,37 @@ class Main(FramelessWindow):
         }
         ''')
         #: File Menu
-        file = main_menu.addMenu("File")
-        self.new_file = file.addAction('New File')
+        self.file_menu = self.main_menu.addMenu("File")
+        self.new_file = self.file_menu.addAction('New File')
         
-        self.open_file = file.addAction('Open File')
+        self.open_file = self.file_menu.addAction('Open File')
         
-        self.close_file = file.addAction('Close File')
+        self.close_file = self.file_menu.addAction('Close File')
         
-        self.save_file = file.addAction('Save File')
+        self.save_file = self.file_menu.addAction('Save File')
         
-        self.save_file_as = file.addAction('Save File As')
-        file.addSeparator()
-        # self.pref = file.addAction('Preferences')
+        self.save_file_as = self.file_menu.addAction('Save File As')
+        self.file_menu.addSeparator()
+        # self.pref = self.file_menu.addAction('Preferences')
 
-        self.menu_exit = file.addAction('Exit')
+        self.menu_exit = self.file_menu.addAction('Exit')
         
         #: Edit Menu
-        edit = main_menu.addMenu("Edit")
-        self.undo_edit = edit.addAction('Undo')
-        self.redo_edit = edit.addAction('Redo')
+        self.edit_menu = self.main_menu.addMenu("Edit")
+        self.undo_edit = self.edit_menu.addAction('Undo')
+        self.redo_edit = self.edit_menu.addAction('Redo')
         
-        edit.addSeparator()
+        self.edit_menu.addSeparator()
         
-        self.cut_edit = edit.addAction('Cut')
+        self.cut_edit = self.edit_menu.addAction('Cut')
         
-        self.copy_edit = edit.addAction('Copy')
+        self.copy_edit = self.edit_menu.addAction('Copy')
         
-        self.paste_edit = edit.addAction('Paste')
+        self.paste_edit = self.edit_menu.addAction('Paste')
         
-        edit.addSeparator()
+        self.edit_menu.addSeparator()
         
-        edit_insert = edit.addMenu('Insert')
+        edit_insert = self.edit_menu.addMenu('Insert')
         header_insert = edit_insert.addMenu('Headers')
         self.insert_header_1 = header_insert.addAction('H1 (Header 1)')
         self.insert_header_2 = header_insert.addAction('H2 (Header 2)')
@@ -169,17 +169,17 @@ class Main(FramelessWindow):
         
         
         #: View Menu
-        view = main_menu.addMenu('View')
+        view = self.main_menu.addMenu('View')
         self.preview_menu = view.addAction('Preview Mode')
         self.preview_menu.setCheckable(True)
 
-        change_theme = main_menu.addMenu('Theme')
+        change_theme = self.main_menu.addMenu('Theme')
         self._light_theme = change_theme.addAction('Light')
         self._light_theme.setCheckable(True)
         self._dark_theme = change_theme.addAction('Dark')
         self._dark_theme.setCheckable(True)
 
-        _help = main_menu.addMenu('Help')
+        _help = self.main_menu.addMenu('Help')
         about = _help.addAction('About')
         about.triggered.connect(self.show_about_dialog)
 
@@ -191,7 +191,7 @@ class Main(FramelessWindow):
         self._light_theme.triggered.connect(lambda: self.change_theme('light'))
         self._dark_theme.triggered.connect(lambda: self.change_theme('dark'))
 
-        self._titlebar.settings_btn.setMenu(main_menu)
+        self._titlebar.settings_btn.setMenu(self.main_menu)
         self._titlebar.showSettingsButton()
 
         
@@ -272,8 +272,6 @@ class Main(FramelessWindow):
             self
         )
         self.about_dialog.hide()
-        # self._find = Find(self)
-
 
         #: Statusbar
         self.status_bar = Statusbar(self)
@@ -390,7 +388,7 @@ class Main(FramelessWindow):
         self.properties.width = self.width()
 
         text = self.editor.toPlainText()
-
+        
         if self.editor._current_text != text and text != '':
             self.editor.exit_dialog.yesSignal.connect(e.accept)
             self.editor.exit_dialog.cancelSignal.connect(e.ignore)
@@ -422,10 +420,6 @@ class Main(FramelessWindow):
         if not self.about_dialog.isHidden():
             self.about_dialog.init_widget()
         
-        # self._find.move(
-        #     e.size().width() - 400,
-        #     e.size().height() / 16
-        # )
         self.status_bar.move(
             e.size().width() - 200,
             e.size().height() - 30
