@@ -103,7 +103,7 @@ class Main(FramelessWindow):
         else:
             self.setMinimumSize(820, 520)
 
-        print(self._spell_check)
+
         self.center()
         self.setWindowTitle('Serum Writer')
             
@@ -131,8 +131,13 @@ class Main(FramelessWindow):
         
         self.save_file_as = self.file_menu.addAction('Save File As')
         self.file_menu.addSeparator()
+        
         self.spell_checking = self.file_menu.addAction('Spell Checking')
         self.spell_checking.setCheckable(True)
+        
+        if self._spell_check:
+            self.spell_checking.setChecked(True)
+
         # self.pref = self.file_menu.addAction('Preferences')
 
         self.export_menu = self.file_menu.addMenu('Export')
@@ -285,17 +290,21 @@ class Main(FramelessWindow):
         self.__update_statusbar()
 
     def add_spell_checking(self):
+        
         if self.spell_checking.isChecked():
             self.editor.highlighter.speller = SpellCheckWrapper(
                 self.editor.get_words(),
                 self.editor.addToDictionary
             )
-            Properties.Settings().spell_check = True
-        else:
-            self.editor.highlighter.speller = None
-            Properties.Settings().spell_check = False
+            self.properties.spell_check = True
+            
+            return 
 
+    
+        self.editor.highlighter.speller = None
+        self.properties.spell_check = False
 
+        
 
     def show_about_dialog(self):
         self.about_dialog.yesButton.setText('Ok')
@@ -544,12 +553,12 @@ class Main(FramelessWindow):
         if self.preview.isHidden():
             self.preview_menu.setChecked(True)
             self.preview.show()
-            self.properties.preview = False
+            self.properties.preview = True
 
         else:
             self.preview_menu.setChecked(False)
             self.preview.hide()
-            self.properties.preview = True
+            self.properties.preview = False
 
 
        

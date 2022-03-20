@@ -39,10 +39,10 @@ class Settings(QSettings):
             return None
 
         if v == 'true':
-            return False
+            return True
 
         elif v == 'false':
-            return True
+            return False
         
         elif Utils.is_json(v):
             return json.load(v)
