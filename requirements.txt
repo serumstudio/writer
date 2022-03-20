@@ -4,3 +4,4 @@ markdown==3.3.6
 yapsy==1.12.2
 pyenchant
 xhtml2pdf
+pyext
