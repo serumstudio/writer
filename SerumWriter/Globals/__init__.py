@@ -66,7 +66,7 @@ def look_up_resouce_module():
     
     return top
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 editor_ctx = LocalStack()
 res_module_ctx = LocalStack()
 palette_ctx = LocalStack()

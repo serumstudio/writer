@@ -24,16 +24,27 @@ import SerumWriter.Properties as Properties
 from SerumWriter.Lib.Modern import load_stylesheet
 from SerumWriter.Globals import app_ctx
 from SerumWriter.Views.MainWindow import Main
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QFontDatabase
 import sys
 import argparse
 import pathlib
-import pyext
 
+from PyQt5.QtWidgets import (
+    QApplication,
+
+)
+from PyQt5.QtGui import (
+    QFontDatabase,
+)
+from PyQt5.QtCore import (
+    QTimer,
+    
+)
+from SerumWriter.Components.Splashscreen import SplashScreen
 from SerumWriter.Plugins.Manager import create_plugin_folder
 
 #: bypass module error (pyinstaller)
+
+    
 
 def load_module_path():
     p = pathlib.Path().home() / '.serum'
@@ -44,7 +55,9 @@ def load_module_path():
         os.remove(mod.absolute())
         os.mkdir(mod.absolute())
     
+
     sys.path.append(str(mod.absolute()))
+
 
 def set_stylesheet(app: 'QApplication', default_theme: str = 'dark'):
 
@@ -76,7 +89,14 @@ def load_fonts():
     QFontDatabase.addApplicationFont(":Resources/fonts/FiraMono-Regular.ttf")
     QFontDatabase.addApplicationFont(":Resources/FiraCode-Regualr.ttf")
 
+def show_window(w, s):
+    print('MainWindow initialized')
+    w.show()
+    s.close()
+    
+
 def main(args):
+    
     create_plugin_folder()
     load_module_path()
     args = args[1:]
@@ -88,9 +108,13 @@ def main(args):
     
     app = app_context()
     app.setStyle('Fusion')
+  
+    splash = SplashScreen()
+
+
     set_stylesheet(app)
     load_fonts()
-    
+
     
     if args.file:
         file = pathlib.Path(args.file)
@@ -99,9 +123,10 @@ def main(args):
             Properties.Settings().filename = str(file.absolute())
            
     
-   
+    
     w = Main()
-    w.show()
+    QTimer.singleShot(2500, lambda: show_window(w, splash))
+    
     app.exec_()
 
 if __name__ == '__main__':

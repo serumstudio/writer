@@ -21,9 +21,90 @@
 
 from enum import IntFlag, auto
 import re
+from PyQt5.QtCore import (
+	Qt,
+	QTemporaryFile
+)
+from PyQt5.QtGui import (
+	QFont, 
+	QSyntaxHighlighter, 
+	QTextCharFormat, 
+	QColor
+)
+from typing import Callable
+from enchant import DictWithPWL
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QColor
+class SpellCheckWrapper:
+    def __init__(
+        self, personal_word_list: list[str], 
+		addToDictionary: Callable[[str], None]
+    ):
+        # Creating temporary file
+        self.file = QTemporaryFile()
+        self.file.open()
+        self.dictionary = DictWithPWL(
+            "en_US",
+            self.file.fileName(),
+        )
+
+        self.addToDictionary = addToDictionary
+
+        self.word_list = set(personal_word_list)
+        self.load_words()
+
+    def load_words(self):
+        for word in self.word_list:
+            self.dictionary.add(word)
+
+    def suggestions(self, word: str) -> list[str]:
+        return self.dictionary.suggest(word)
+
+    def correction(self, word: str) -> str:
+        return self.dictionary.suggest(word)[0]
+
+    def add(self, new_word: str) -> bool:
+        if self.check(new_word):
+            return False
+        self.word_list.add(new_word)
+        self.addToDictionary(new_word)
+        self.dictionary.add(new_word)
+        return True
+
+    def check(self, word: str) -> bool:
+        return self.dictionary.check(word)
+
+    def getNewWords(self) -> set[str]:
+        return self.word_list
+
+
+class SpellChecker(QSyntaxHighlighter):
+	re_pattern = re.compile(r"\b([A-Za-z]{2,})\b")
+
+	def highlightBlock(self, text: str) -> None:
+		
+		if not hasattr(self, "speller"):
+			return
+
+		self.misspelledFormat = QTextCharFormat()
+		self.misspelledFormat.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
+		self.misspelledFormat.setUnderlineColor(Qt.red)
+
+		for word_object in self.re_pattern.finditer(text):
+			if not self.speller.check(word_object.group()):
+				print('incorrect')
+				fmt = QTextCharFormat()
+				fmt.setFontItalic(True)
+				self.setFormat(
+					word_object.start(),
+					word_object.end() - word_object.start(),
+					fmt,
+				)
+				
+
+	def setSpeller(self, speller: SpellCheckWrapper):
+		self.speller = speller
+
+
 
 reHtmlTags     = re.compile('<[^<>@]*>')
 reHtmlSymbols  = re.compile(r'&#?\w+;')
@@ -109,13 +190,25 @@ docTypesMapping = {
 
 class SyntaxHighlighter(QSyntaxHighlighter):
 	
+	#: For spell checking
+	# r"\b([A-Za-z]{2,})\b"
+	re_pattern = re.compile(r"\b([A-Za-z]{2,})\b")
 
-	def __init__(self, parent=None, docType=None, dictionaries=None, palette=None):
+	def __init__(
+		self, 
+		parent=None, 
+		docType=None, 
+		dictionaries=None, 
+		palette=None,
+		spell_checker=None
+	):
 		super(SyntaxHighlighter, self).__init__(parent)
+		
 		self.palette = palette
 		self.dictionaries = dictionaries
 		self.docType = docType
-		
+		self.speller = spell_checker
+
 		darker = QColor(self.palette.COLOR_TEXT_2).darker(200).name()
 		self.patterns = (
 			# regex,         color,                                markups
@@ -148,11 +241,28 @@ class SyntaxHighlighter(QSyntaxHighlighter):
 			(reReSTFldLists, NF,                                   Markup.ReST),
 		)
 
+	def spellCheck(self, text):
+		self.misspelledFormat = QTextCharFormat()
+		self.misspelledFormat.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
+		self.misspelledFormat.setUnderlineColor(Qt.red)
+
+		for word_object in self.re_pattern.finditer(text):
+			if not self.speller.check(word_object.group()):
+				self.setFormat(
+					word_object.start(),
+					word_object.end() - word_object.start(),
+					self.misspelledFormat,
+				)
+
+
 	def highlightBlock(self, text):
 		# Syntax highlighter
 	
 		codeSpans = set()
 
+		if self.speller:
+			self.spellCheck(text)
+		
 		if self.docType in docTypesMapping:
 			markup = docTypesMapping[self.docType]
 			for pattern, *formatters, markups in self.patterns:

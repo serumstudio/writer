@@ -25,7 +25,7 @@ from SerumWriter.Globals import (
     app,
     __version__
 )
-
+import os
 from PyQt5.QtWidgets import (
     QDesktopWidget,
     QMenu,
@@ -33,7 +33,8 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QShortcut,
     QLabel,
-    QGraphicsOpacityEffect
+    QGraphicsOpacityEffect,
+    QFileDialog
 )
 from PyQt5.QtGui import (
     QKeySequence,
@@ -52,7 +53,9 @@ from SerumWriter.Components.Editor import (
     Preview,
     Find
 )
-from SerumWriter.Lib.Highlighter import SyntaxHighlighter
+from SerumWriter.Components.Splashscreen import res
+from SerumWriter.Lib.Builder import PDFBuilder
+from SerumWriter.Lib.Highlighter import SpellCheckWrapper
 from SerumWriter.Lib.Modern import load_stylesheet
 from SerumWriter.Utils import word_count
 import SerumWriter.Properties as Properties
@@ -67,8 +70,7 @@ if t.TYPE_CHECKING:
         QPoint
     )
 
-from SerumWriter.Plugins import MainPlugin
-from SerumWriter.Plugins.Manager import PluginManager
+import webbrowser
 
 class Menu(QMenu):
     _position: 'QPoint' = None
@@ -83,10 +85,13 @@ class Main(FramelessWindow):
     __word_count = None
     __status_label = None
     changed_style = pyqtSignal()
+    template_name: str = 'Serum Writer'
+    export_dialog = None
+    _spell_check = Properties.Settings().spell_check
 
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QIcon(':qss_icons/rc/logo_512.png'))
+        self.setWindowIcon(QIcon(':/image/logo.png'))
         self.properties = Properties.Settings()
         self._titlebar = self.titlebar()
 
@@ -98,7 +103,7 @@ class Main(FramelessWindow):
         else:
             self.setMinimumSize(820, 520)
 
-
+        print(self._spell_check)
         self.center()
         self.setWindowTitle('Serum Writer')
             
@@ -126,7 +131,12 @@ class Main(FramelessWindow):
         
         self.save_file_as = self.file_menu.addAction('Save File As')
         self.file_menu.addSeparator()
+        self.spell_checking = self.file_menu.addAction('Spell Checking')
+        self.spell_checking.setCheckable(True)
         # self.pref = self.file_menu.addAction('Preferences')
+
+        self.export_menu = self.file_menu.addMenu('Export')
+        self.export_pdf = self.export_menu.addAction('Export to PDF')
 
         self.menu_exit = self.file_menu.addAction('Exit')
         
@@ -195,17 +205,12 @@ class Main(FramelessWindow):
         self._titlebar.showSettingsButton()
 
         
-        self.editor = Editor(self)
+        self.editor = Editor(self, spell_checking=self._spell_check)
+        if self.editor.toPlainText() != '':
+            self.__word_count = word_count(self.editor.toPlainText())
         self.preview = Preview()
 
 
-        self.highlighter = SyntaxHighlighter(
-            self.editor.document(),
-            docType=self.editor.getFileExtension(),
-            palette=palette
-        )
-        self.highlighter.docType = self.editor.getFileExtension()
-        
         
         self.editor.textChangedEvent.connect(self.typing_event)
         self.editor._show_status.connect(self.show_status)
@@ -223,7 +228,7 @@ class Main(FramelessWindow):
             self.edit_titlebar_border_bottom()
         
 
-
+        
         #: Menu signals
         self.new_file.triggered.connect(self.editor.new)
         self.open_file.triggered.connect(self._open_file)
@@ -232,6 +237,8 @@ class Main(FramelessWindow):
         self.save_file_as.triggered.connect(self.save_as)
         
         # self.pref.triggered.connect(self.show_pref)
+        self.export_pdf.triggered.connect(self._export_pdf)
+        self.spell_checking.triggered.connect(self.add_spell_checking)
         self.menu_exit.triggered.connect(self.close)
 
         #: Edit Signals
@@ -253,20 +260,19 @@ class Main(FramelessWindow):
 
         #: View
         self.preview_menu.triggered.connect(self.__preview_show)
-        
-        self.plugin_manager = PluginManager
-        self.plugin_manager.setCategoriesFilter({'MainPlugin': MainPlugin})
-        self.plugin_manager.collectPlugins()
+
         
         #: Run editor plugins
         self.editor.run_plugins()
-        self.run_plugins()
+  
         
-        
+        #: Add find 
+        self._find = Find(self.editor, self)
+        self._find.hide()
 
         self.about_dialog = MaskDialog(
             'Serum Writer', 
-            'Next generation - elegant text editor built for your needs.\n\nVersion: {version}.\nDeveloped By: Zenqi\nGithub: @zxnqi'.format(
+            'Next generation - elegant text editor built for your needs.\n\nVersion: {version}.\nDeveloped By: Zenqi\nGithub: @zxnqi\n\nArtwork by: ori toor (https://oritoor.com)'.format(
                 version=__version__
             ),
             self
@@ -276,19 +282,20 @@ class Main(FramelessWindow):
         #: Statusbar
         self.status_bar = Statusbar(self)
         self.__status_bar()
+        self.__update_statusbar()
 
-    def run_plugins(self):
-        for plugin in self.plugin_manager.getAllPlugins():
-            po = plugin.plugin_object
-            try:
-                po.init(self)
-            except AttributeError:
-                pass
-            
-            try:
-                po.run()
-            except AttributeError:
-                pass
+    def add_spell_checking(self):
+        if self.spell_checking.isChecked():
+            self.editor.highlighter.speller = SpellCheckWrapper(
+                self.editor.get_words(),
+                self.editor.addToDictionary
+            )
+            Properties.Settings().spell_check = True
+        else:
+            self.editor.highlighter.speller = None
+            Properties.Settings().spell_check = False
+
+
 
     def show_about_dialog(self):
         self.about_dialog.yesButton.setText('Ok')
@@ -299,7 +306,7 @@ class Main(FramelessWindow):
         dialog.show()
 
     def change_theme(self, theme: str='dark'):
-        self.setWindowIcon(QIcon(':qss_icons/rc/logo_512.png'))
+
         self.properties.theme = theme
         app.setStyleSheet(load_stylesheet(style=theme))
         self.changed_style.emit()
@@ -351,7 +358,7 @@ class Main(FramelessWindow):
         QShortcut(QKeySequence('Ctrl+Shift+6'), self)\
             .activated.connect(lambda: self.editor.insertHeader(6))
 
-        QShortcut(QKeySequence('Ctrl+Shift+B'), self)\
+        QShortcut(QKeySequence('Ctrl+B'), self)\
             .activated.connect(self.editor.insertBold)
 
         QShortcut(QKeySequence('Ctrl+Shift+I'), self)\
@@ -369,19 +376,53 @@ class Main(FramelessWindow):
         QShortcut(QKeySequence('Ctrl+Shift+Q'), self)\
             .activated.connect(self.editor.insertQuoteBlock)
 
+        QShortcut(QKeySequence('Ctrl+F'), self)\
+            .activated.connect(self.show_find)
+
+        QShortcut(QKeySequence('Ctrl+Shift+B'), self)\
+            .activated.connect(self._export_pdf)
+
+    def show_find(self):
+        if self._find.isHidden():
+            self._find.show()
+            self._find.setFocus()
+        else:
+            self._find.hide()
+        
+        self._find.setFocus()
+
     def _save_file(self):
         self.editor.save()
-        self.highlighter.docType = self.editor.getFileExtension()
+        
 
     
     def _open_file(self):
         self.editor.open()
-        self.highlighter.docType = self.editor.getFileExtension()
+   
         
         
     def save_as(self):
         self.editor.saveAs()
-        self.highlighter.docType = self.editor.getFileExtension()
+  
+    def _export_pdf(self):
+        builder = PDFBuilder(self.editor.toRawHtml(), self.template_name)
+        file = QFileDialog.getSaveFileName(
+            self, 
+            'Export to PDF', 
+            os.getcwd(), 
+            "PDF (*.pdf);;All Files (*)"
+        )[0]
+
+        builder.export(file)
+        print('Done exporting: %s' % (file))
+        self.export_dialog = MaskDialog(
+            'Serum Writer',
+            'Succesfully exported to PDF: %s' % (file),
+            self
+        )
+        self.export_dialog.yesButton.setText('Open')
+        self.export_dialog.yesButton.clicked.connect(lambda: webbrowser.open_new_tab(file))
+        self.export_dialog.exec_()
 
     def closeEvent(self, e):
         self.properties.height = self.height()
@@ -397,6 +438,14 @@ class Main(FramelessWindow):
 
     
     def resizeEvent(self, e: 'QResizeEvent'):
+        
+        if self.export_dialog:
+            self.export_dialog.init_widget(
+                e.size().width(),
+                e.size().height()
+            )
+            if not self.export_dialog.isHidden():
+                self.export_dialog.init_widget()
 
         self.editor.continue_dialog.init_widget(
             e.size().width(), 
@@ -410,7 +459,10 @@ class Main(FramelessWindow):
             e.size().width(), 
             e.size().height()
         )
-
+        self._find.move(
+            70,
+            e.size().height()
+        )
         if not self.editor.continue_dialog.isHidden():
             self.editor.continue_dialog.init_widget()
 
@@ -420,11 +472,17 @@ class Main(FramelessWindow):
         if not self.about_dialog.isHidden():
             self.about_dialog.init_widget()
         
+        self._find.move(
+            70,
+            e.size().height() - 30
+        )
         self.status_bar.move(
             e.size().width() - 200,
             e.size().height() - 30
         )
         return super().resizeEvent(e)
+
+    
 
     def edit_titlebar_border_bottom(self):
         if not self.preview.isHidden():

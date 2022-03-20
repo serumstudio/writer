@@ -82,6 +82,13 @@ QScrollBar:vertical {
     subcontrol-origin: margin;
   }
 
+QLineEdit{
+    background-color: $COLOR_BACKGROUND_1;
+    font-family: Segoe UI;
+    selection-color: $COLOR_BACKGROUND_2;
+    selection-background-color: $COLOR_ACCENT_5;
+}
+
 QWidget#DialogWidget { 
     background-color: $COLOR_BACKGROUND_1;
     border: 1px solid $COLOR_BACKGROUND_2;

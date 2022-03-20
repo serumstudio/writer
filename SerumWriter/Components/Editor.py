@@ -44,9 +44,14 @@ from PyQt5.QtCore import (
     pyqtSignal as Signal,
     Qt, 
     QTimer,
+    QPropertyAnimation,
+    QPoint,
+    QEasingCurve,
+    QMimeData
 )
 from SerumWriter.Globals import palette
 from markdown import markdown
+from SerumWriter.Lib.Highlighter import SpellCheckWrapper, SyntaxHighlighter
 import SerumWriter.Properties as Properties
 import pathlib
 
@@ -64,68 +69,39 @@ class Find(QWidget):
     def __init__(self, editor: 'Editor', parent=None):
         super().__init__(parent=parent)
         self.editor = editor
-        self.setMinimumSize(500, 10)
-        self.setStyleSheet(
-            """
-            QWidget {{
-                background-color: red;
-            }}
-            QLineEdit {{
-                background-color: {bg};
-                border: 1px solid {border};
-                padding: 2px 5px 2px 5px;
-            }}
-            """.format(
-                bg2 = palette.COLOR_BACKGROUND_2,
-                bg = palette.COLOR_BACKGROUND_1,
-                border = palette.TITLE_BAR_TEXT_COLOR
-            )
-        )
 
+        self.setObjectName('Find')
         self._layout = QHBoxLayout()
         self._layout.setContentsMargins(0,0,0,0)
         
         self.setLayout(self._layout)
-
         self.init_widgets()
 
     def init_widgets(self):
         
-        
-        self.toggle_replace = QPushButton()
-        self.toggle_replace.setFixedSize(16, 16)
-        self.toggle_replace.setObjectName('ToggleReplace')
-        
+        self.animIn = QPropertyAnimation(self, b'geometry', duration=500, easingCurve=QEasingCurve.OutCubic)
+        self.animIn.setPropertyName(b'pos')
+        self.animOut = QPropertyAnimation(self, b'geometry', duration=500, easingCurve=QEasingCurve.Type.OutCubic)
+        self.animOut.setPropertyName(b'pos')
+
         self.find_edit = QLineEdit()
+        self.find_edit.textChanged.connect(self.textChanged)
         self.find_edit.setPlaceholderText('Find')
         self.find_edit.setFixedWidth(160)
+       
 
-        self.results = QLabel()
-        self.results.setText('No results')
-
-        self.up_btn = QPushButton()
-        self.up_btn.setObjectName('UpButton')
-
-        self.down_btn = QPushButton()
-        self.down_btn.setObjectName('DownButton')
-
-        self.close_btn = QPushButton()
-        self.close_btn.setObjectName('_CloseButton')
-
-        self._layout.addWidget(self.toggle_replace)
         self._layout.addWidget(self.find_edit) 
-        self._layout.addWidget(self.results) 
-
-        # self._layout.addWidget(self.up_btn)
-        # self._layout.addWidget(self.down_btn)
-        # self._layout.addWidget(self.close_btn)
 
 
-    def find(self):
-        _str = self.find_edit.text()
-        self.editor.find(_str)
-        
-
+    def textChanged(self):
+        words = self.find_edit.text()
+        if not self.editor.find(words):
+            # no match found, move the cursor to the beginning of the
+            # document and start the search once again
+            cursor = self.editor.textCursor()
+            cursor.setPosition(0)
+            self.editor.setTextCursor(cursor)
+            self.editor.find(words)
 
 class Preview(QTextEdit):
 
@@ -159,15 +135,32 @@ class Editor(QTextEdit):
     _current_text: str = None
     __extension = ''
     __name = None
+    __word_list_path = "wordlist"
 
     def __init__(self, parent=None, **options):
         super().__init__(parent=parent)
         self._parent = parent
         self._focus_mode = options.get('focus', True)
-        self.__placeholder = options.get('placeholder', 'Start typing...')
+        self.__placeholder = options.get('placeholder', '')
+        self.spell_checking = options.get('spell_checking', False)
         self._properties = Properties.Settings()
         self.plugin_manager = PluginManager
         
+        if self.spell_checking:
+            spell_checker = SpellCheckWrapper(self.get_words(), self.addToDictionary)
+        else:
+            spell_checker = None
+
+        self.highlighter = SyntaxHighlighter(
+            self.document(),
+            docType=self.getFileExtension(),
+            palette=palette,
+            spell_checker=spell_checker
+        )
+
+        if hasattr(self, "speller"):
+            self.spellchecker.setSpeller(self.speller)
+
         self.plugin_manager.setCategoriesFilter({'EditorPlugin': EditorPlugin})
         try:
             self.plugin_manager.collectPlugins()
@@ -221,10 +214,12 @@ class Editor(QTextEdit):
             self.clear()
 
     def run_plugins(self):
+
         for plugin in self.plugin_manager.getAllPlugins():
             po = plugin.plugin_object
+            
             try:
-                po.init(self)
+                po.init(self, self._parent)
             except AttributeError:
                 pass
             
@@ -232,6 +227,21 @@ class Editor(QTextEdit):
                 po.run()
             except AttributeError:
                 pass
+
+    def get_words(self):
+        if not os.path.exists(self.__word_list_path):
+            f = open(self.__word_list_path, 'w')
+            f.close()
+            return []
+
+        with open(self.__word_list_path, 'r') as f:
+            world_list = [line.strip() for line in f.readlines()]
+        
+        return world_list
+    
+    def addToDictionary(self, word):
+        with open(self.__word_list_path, 'a') as f:
+            f.write('\n'+word)
 
     def clear(self) -> None:
         QTextEdit.clear(self)
@@ -317,7 +327,6 @@ class Editor(QTextEdit):
             self.__surround_text(cursor, e.text(), selection=True)
 
         elif self.__is_surround_key(key):
-            print(e.text())
             self.__surround_text(cursor, e.text())
 
         return super().keyPressEvent(e)
@@ -425,7 +434,8 @@ class Editor(QTextEdit):
         self._current_text = self.toPlainText()
         self.updateProperties()
         
-
+        self.highlighter.docType = self.getFileExtension()
+        self.highlighter.rehighlight()
 
     def saveAs(self):
         file = QFileDialog.getSaveFileName(
@@ -450,7 +460,8 @@ class Editor(QTextEdit):
 
             self.updateProperties()
 
-
+        self.highlighter.docType = self.getFileExtension()
+        self.highlighter.rehighlight()
 
     def save_and_clear(self):
         self.save()
@@ -531,6 +542,9 @@ class Editor(QTextEdit):
             else:
                 self._open(file)
                 self.updateProperties()
+
+        self.highlighter.docType = self.getFileExtension()
+        self.highlighter.rehighlight()
 
     def insertHeader(self, level: int=1):
         self.textCursor().insertText('{header} '.format(header='#'*level))
@@ -623,4 +637,8 @@ class Editor(QTextEdit):
         else:
             self.setFileName(self._properties.filename)
 
-    
+    def insertFromMimeData(self, source: QMimeData) -> None:
+        return super().insertFromMimeData(source)
+
+    def toRawHtml(self):
+        return markdown(self.toPlainText())

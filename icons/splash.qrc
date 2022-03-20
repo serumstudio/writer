@@ -1,0 +1,9 @@
+
+<RCC warning="File created programmatically. All changes made in this file will be lost!">
+    
+    <qresource prefix="image">
+        <file>splashscreen.png</file>
+        <file>icon.ico</file>
+        <file>logo.png</file>
+    </qresource>
+</RCC>
