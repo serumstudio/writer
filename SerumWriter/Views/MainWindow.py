@@ -211,9 +211,11 @@ class Main(FramelessWindow):
 
         
         self.editor = Editor(self, spell_checking=self._spell_check)
+        self.preview = Preview()
         if self.editor.toPlainText() != '':
             self.__word_count = word_count(self.editor.toPlainText())
-        self.preview = Preview()
+            self.preview.setMarkdownOnMargin(self.editor.toPlainText())
+        
 
 
         
