@@ -2,7 +2,7 @@
 
 
 block_cipher = None
-
+to_exclude = {'opengl32sw.dll', 'Qt5DBus.dll', 'Qt5WebSockets.dll', 'Qt5Svg.dll'}
 
 a = Analysis(['app.py'],
              pathex=[],
@@ -13,7 +13,7 @@ a = Analysis(['app.py'],
                 ('Themes/Dark/__init__.py', 'Themes/Dark'),
                 ('Themes/Light/style_rc.py', 'Themes/Light'),
                 ('Themes/Light/__init__.py', 'Themes/Light'),
-                ('Templates/writer/metadata.json', 'Templates/wrter'), 
+                ('Templates/writer/metadata.json', 'Templates/writer'), 
                 ('Templates/writer/res/layout.html', 'Templates/writer/res'),
              ],
              hiddenimports=[],
@@ -25,6 +25,8 @@ a = Analysis(['app.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
+             
+a.binaries -= [(os.path.normcase(x), None, None) for x in to_exclude]
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 
