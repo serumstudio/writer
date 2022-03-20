@@ -217,7 +217,6 @@ class Main(FramelessWindow):
             self.preview.setMarkdownOnMargin(self.editor.toPlainText())
         
 
-
         
         self.editor.textChangedEvent.connect(self.typing_event)
         self.editor._show_status.connect(self.show_status)
