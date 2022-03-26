@@ -278,7 +278,7 @@ class Main(FramelessWindow):
 
         self.about_dialog = MaskDialog(
             'Serum Writer', 
-            'Next generation - elegant text editor built for your needs.\n\nVersion: {version}.\nDeveloped By: Zenqi\nGithub: @zxnqi\n\nArtwork by: ori toor (https://oritoor.com)'.format(
+            'Next generation - elegant text editor built for your needs.\n\nVersion: {version}.\nDeveloped By: Riyuzen\nGithub: @riyuzxn\n\nArtwork by: ori toor (https://oritoor.com)'.format(
                 version=__version__
             ),
             self
