@@ -74,6 +74,15 @@ Here are some avaialable features.
   </tr>
 </table>
 
+## 📃 TODOS
+- Timer (For writing tracking)
+- Preference (Customization)
+- Plugin System (Experimental)
+- Theme creation
+- Spelling suggestion
+- Fix live preview (image bug & a lot more)
+
+
 ## 💻 Contributors
 Serum Writer would be nothing without these contributors.
 
